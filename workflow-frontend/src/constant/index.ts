@@ -3,7 +3,7 @@ import { DropdownOption } from "../components/dropdown/Dropdown.types";
 
 export const defaultNode: Node = {
   id: "in",
-  position: { x: 50, y: 100 },
+  position: { x: 25, y: 50 },
   data: { label: "Input" },
   type: "input",
 };
@@ -26,5 +26,5 @@ export const defaultNodes: Node[] = [
 export const defaultDropDownOptions: DropdownOption[] = [
   { value: "input", label: "Input" },
   { value: "output", label: "Output" },
-  { value: "action", label: "Action" },
+  { value: undefined, label: "Action" },
 ];

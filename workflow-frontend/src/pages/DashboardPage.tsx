@@ -49,6 +49,11 @@ const DashboardPage: React.FC = () => {
   const [open, setOpen] = useState<boolean>(false);
   const [singleValue, setSingleValue] = useState<string | number>("");
   const [basicValue, setBasicValue] = useState("");
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [currentNodeIndex, setCurrentNodeIndex] = useState<number>(-1);
+  const [currentNode, setCurrentNode] = useState<Node | null>(null);
+  const [show, setShow] = useState<boolean>(false);
+  const [name, setName] = useState<string>("");
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -60,7 +65,23 @@ const DashboardPage: React.FC = () => {
     setError(null);
     try {
       const res = await axios.post(`${apiUrl}/workflows`, {
-        name: "My Workflow",
+        name: name,
+        data: { nodes, edges },
+      });
+      await fetchWorkflows();
+    } catch (e: any) {
+      setError(e?.response?.data?.message || "Failed to save");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const updateWorkflow = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.put(`${apiUrl}/workflows/${currentNode?.id}`, {
+        name: name,
         data: { nodes, edges },
       });
       await fetchWorkflows();
@@ -86,6 +107,8 @@ const DashboardPage: React.FC = () => {
           )}`
         );
       } else {
+        currentNode ? updateWorkflow() : saveWorkflow();
+        setName("");
         setError(null);
       }
     } catch (e: any) {
@@ -125,12 +148,53 @@ const DashboardPage: React.FC = () => {
           <Button variant="primary" onClick={() => setOpen(true)}>
             + Add Node
           </Button>
+          {currentNode && (
+            <Button
+              onClick={() => {
+                setNodes(defaultNodes);
+                setEdges([]);
+                setName("");
+                setCurrentNode(null);
+              }}
+            >
+              New
+            </Button>
+          )}
+          <Modal
+            isOpen={show}
+            onClose={() => {
+              setShow(false);
+              setName("");
+            }}
+            title={currentNode ? "Edit Workflow" : "Add Workflow"}
+            size="medium"
+          >
+            <div className="dashboardModal">
+              <TextInput
+                value={name}
+                onChange={(value) => setName(value)}
+                placeholder="Enter some text..."
+                label="Workflow Name"
+                helperText=""
+                clearable
+              />
+              <Button
+                variant="primary"
+                onClick={() => {
+                  validateWorkflow();
+                  setShow(false);
+                }}
+              >
+                Save
+              </Button>
+            </div>
+          </Modal>
           <Modal
             isOpen={open}
             onClose={() => {
               setOpen(false);
             }}
-            title="Add Node"
+            title={isEdit ? "Edit Node" : "Add Node"}
             size="medium"
           >
             <div className="dashboardModal">
@@ -146,59 +210,78 @@ const DashboardPage: React.FC = () => {
                 value={basicValue}
                 onChange={(value) => setBasicValue(value)}
                 placeholder="Enter some text..."
-                label="Basic Input"
+                label="Node Name"
                 helperText=""
                 clearable
               />
               <Button
                 variant="primary"
                 onClick={() => {
-                  defaultNode.data.label = basicValue;
-                  if (singleValue === "input") {
-                    defaultNode.type = "input";
-                  } else if (singleValue === "output") {
-                    defaultNode.type = "output";
+                  if (!isEdit) {
+                    const node = JSON.parse(JSON.stringify(defaultNode));
+                    node.data.label = basicValue;
+                    if (singleValue === "input") {
+                      node.type = "input";
+                    } else if (singleValue === "output") {
+                      node.type = "output";
+                    } else {
+                      delete node.type;
+                    }
+                    const newNode = { ...node, id: `in${nodes.length}` };
+                    console.log([...nodes, newNode]);
+                    setNodes([...nodes, newNode]);
                   } else {
-                    delete defaultNode.type;
+                    nodes[currentNodeIndex].data.label = basicValue;
+                    if (singleValue === "input") {
+                      nodes[currentNodeIndex].type = "input";
+                    } else if (singleValue === "output") {
+                      nodes[currentNodeIndex].type = "output";
+                    } else {
+                      delete nodes[currentNodeIndex].type;
+                    }
+                    setNodes((nodes) => [...nodes]);
+                    setIsEdit(false);
                   }
-                  const newNode = { ...defaultNode, id: `in${nodes.length}` };
-                  setNodes((nodes) => [...nodes, newNode]);
+                  setSingleValue("");
+                  setBasicValue("");
                   setOpen(false);
                 }}
               >
-                Add Node
+                {isEdit ? "Update Node" : "Add Node"}
               </Button>
             </div>
           </Modal>
           <Card>
             <div style={{ height: 400 }}>
-              <ReactFlow
-                nodes={nodes}
-                edges={edges}
-                onNodesChange={onNodesChange}
-                onEdgesChange={onEdgesChange}
-                onConnect={onConnect}
-                fitView
-              >
-                <MiniMap
-                  nodeColor={nodeColor}
-                  nodeStrokeWidth={3}
-                  nodeStrokeColor="#000"
-                  zoomable
-                  pannable
-                />
-                <Controls />
-                <Background />
-              </ReactFlow>
+              {!open && (
+                <ReactFlow
+                  nodes={nodes}
+                  edges={edges}
+                  onNodesChange={onNodesChange}
+                  onEdgesChange={onEdgesChange}
+                  onConnect={onConnect}
+                  fitView
+                >
+                  <MiniMap
+                    nodeColor={nodeColor}
+                    nodeStrokeWidth={3}
+                    nodeStrokeColor="#000"
+                    zoomable
+                    pannable
+                  />
+                  <Controls />
+                  <Background />
+                </ReactFlow>
+              )}
             </div>
             <BlockStack gap="200">
               <Button onClick={validateWorkflow}>Validate</Button>
               <Button
                 variant="primary"
-                onClick={saveWorkflow}
+                onClick={() => setShow(true)}
                 loading={loading}
               >
-                Save
+                {!currentNode ? "Create Workflow" : "Update Workflow"}
               </Button>
             </BlockStack>
           </Card>
@@ -212,14 +295,21 @@ const DashboardPage: React.FC = () => {
                 <p>
                   <b>Current Node Info</b>
                 </p>
-                {nodes.map((n) => (
+                {nodes.map((n, index) => (
                   <Label
                     key={n.id}
                     removable
                     editable
-                    onRemove={() => {}}
+                    onRemove={() => {
+                      nodes.splice(index, 1);
+                      setNodes([...nodes]);
+                    }}
                     onEdit={() => {
-                      console.log(`Edit node: ${n.data.label}`);
+                      setBasicValue(n.data.label);
+                      setSingleValue(n.type as string);
+                      setCurrentNodeIndex(index);
+                      setIsEdit(true);
+                      setOpen(true);
                     }}
                   >
                     {n.data.label}
@@ -234,61 +324,29 @@ const DashboardPage: React.FC = () => {
             {workflows.length === 0 ? (
               <p>No workflows yet.</p>
             ) : (
-              <ul>
-                {workflows.map((w) => (
-                  <li key={w.id}>
-                    <div>
-                      <span>{w.name}</span>
-                      <button
-                        type="button"
-                        className="label-edit"
-                        onClick={() => {}}
-                        disabled={false}
-                        aria-label="Edit label"
-                        tabIndex={-1}
-                      >
-                        <svg
-                          width="12"
-                          height="12"
-                          viewBox="0 0 12 12"
-                          fill="none"
-                        >
-                          <path
-                            d="M8.5 1.5a1.414 1.414 0 0 1 2 2L9 5l-2-2 1.5-1.5zM7 3L2 8v2h2l5-5-2-2z"
-                            stroke="currentColor"
-                            strokeWidth="1"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </button>
-                      <button
-                        type="button"
-                        className="label-edit"
-                        onClick={() => {}}
-                        disabled={false}
-                        aria-label="Edit label"
-                        tabIndex={-1}
-                      >
-                        <svg
-                          width="12"
-                          height="12"
-                          viewBox="0 0 12 12"
-                          fill="none"
-                        >
-                          <path
-                            d="M9 3L3 9M3 3L9 9"
-                            stroke="currentColor"
-                            strokeWidth="1.5"
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </li>
-                ))}
-              </ul>
+              <div>
+                <p>
+                  <b>Workflows:</b>
+                </p>
+                <div className="dashboardModal">
+                  {workflows.map((w) => (
+                    <Label
+                      key={w.id}
+                      removable
+                      editable
+                      onRemove={() => {}}
+                      onEdit={() => {
+                        setName(w.name);
+                        setCurrentNode(w);
+                        setNodes(w.data.nodes);
+                        setEdges(w.data.edges);
+                      }}
+                    >
+                      {w.name}
+                    </Label>
+                  ))}
+                </div>
+              </div>
             )}
           </Card>
         </Layout.Section>

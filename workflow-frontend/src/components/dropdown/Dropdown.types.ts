@@ -1,7 +1,7 @@
-import { ReactNode } from 'react';
+import { ReactNode } from "react";
 
 export interface DropdownOption {
-  value: string | number;
+  value: string | number | any;
   label: string;
   disabled?: boolean;
   icon?: ReactNode;
@@ -18,8 +18,8 @@ export interface DropdownProps {
   label?: string;
   helperText?: string;
   className?: string;
-  size?: 'small' | 'medium' | 'large';
-  variant?: 'default' | 'outlined' | 'filled';
+  size?: "small" | "medium" | "large";
+  variant?: "default" | "outlined" | "filled";
   searchable?: boolean;
   clearable?: boolean;
   multiple?: boolean;

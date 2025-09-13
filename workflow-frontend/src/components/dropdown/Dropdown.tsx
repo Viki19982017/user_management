@@ -1,20 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { DropdownProps, DropdownOption } from './Dropdown.types';
-import './index.css';
+import React, { useState, useRef, useEffect } from "react";
+import { DropdownProps, DropdownOption } from "./Dropdown.types";
+import "./index.css";
 
 const Dropdown: React.FC<DropdownProps> = ({
   options,
   value,
   defaultValue,
-  placeholder = 'Select an option...',
+  placeholder = "Select an option...",
   disabled = false,
   required = false,
   error,
   label,
   helperText,
-  className = '',
-  size = 'medium',
-  variant = 'default',
+  className = "",
+  size = "medium",
+  variant = "default",
   searchable = false,
   clearable = false,
   multiple = false,
@@ -22,27 +22,36 @@ const Dropdown: React.FC<DropdownProps> = ({
   onChange,
   onFocus,
   onBlur,
-  onSearch
+  onSearch,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedValues, setSelectedValues] = useState<(string | number)[]>(() => {
-    if (multiple) {
-      return Array.isArray(value) ? value : [];
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedValues, setSelectedValues] = useState<(string | number)[]>(
+    () => {
+      if (multiple) {
+        return Array.isArray(value) ? value : [];
+      }
+      return value !== undefined
+        ? [value]
+        : defaultValue !== undefined
+        ? [defaultValue]
+        : [];
     }
-    return value !== undefined ? [value] : defaultValue !== undefined ? [defaultValue] : [];
-  });
+  );
 
   const dropdownRef = useRef<HTMLDivElement>(null);
   const searchInputRef = useRef<HTMLInputElement>(null);
 
-  const filteredOptions = searchable && searchQuery
-    ? options.filter(option =>
-        option.label.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : options;
+  const filteredOptions =
+    searchable && searchQuery
+      ? options.filter((option) =>
+          option.label.toLowerCase().includes(searchQuery.toLowerCase())
+        )
+      : options;
 
-  const selectedOption = multiple ? null : options.find(opt => opt.value === selectedValues[0]);
+  const selectedOption = multiple
+    ? null
+    : options.find((opt) => opt.value === selectedValues[0]);
   const displayValue = multiple
     ? selectedValues.length > 0
       ? `${selectedValues.length} selected`
@@ -51,14 +60,17 @@ const Dropdown: React.FC<DropdownProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
-        setSearchQuery('');
+        setSearchQuery("");
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
   useEffect(() => {
@@ -85,12 +97,12 @@ const Dropdown: React.FC<DropdownProps> = ({
     if (multiple) {
       const isSelected = selectedValues.includes(option.value);
       newSelectedValues = isSelected
-        ? selectedValues.filter(val => val !== option.value)
+        ? selectedValues.filter((val) => val !== option.value)
         : [...selectedValues, option.value];
     } else {
       newSelectedValues = [option.value];
       setIsOpen(false);
-      setSearchQuery('');
+      setSearchQuery("");
     }
 
     setSelectedValues(newSelectedValues);
@@ -100,7 +112,7 @@ const Dropdown: React.FC<DropdownProps> = ({
   const handleClear = (e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedValues([]);
-    onChange?.(multiple ? [] : '');
+    onChange?.(multiple ? [] : "");
   };
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -110,28 +122,28 @@ const Dropdown: React.FC<DropdownProps> = ({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
+    if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       handleToggle();
-    } else if (e.key === 'Escape') {
+    } else if (e.key === "Escape") {
       setIsOpen(false);
-      setSearchQuery('');
+      setSearchQuery("");
     }
   };
 
   return (
     <div className={`dropdown-container ${className}`}>
       {label && (
-        <label className={`dropdown-label ${required ? 'required' : ''}`}>
+        <label className={`dropdown-label ${required ? "required" : ""}`}>
           {label}
         </label>
       )}
-      
+
       <div
         ref={dropdownRef}
         className={`dropdown dropdown-${size} dropdown-${variant} ${
-          disabled ? 'disabled' : ''
-        } ${error ? 'error' : ''} ${isOpen ? 'open' : ''}`}
+          disabled ? "disabled" : ""
+        } ${error ? "error" : ""} ${isOpen ? "open" : ""}`}
       >
         <div
           className="dropdown-trigger"
@@ -144,10 +156,14 @@ const Dropdown: React.FC<DropdownProps> = ({
           aria-required={required}
           aria-invalid={!!error}
         >
-          <span className={`dropdown-value ${selectedValues.length === 0 ? 'placeholder' : ''}`}>
+          <span
+            className={`dropdown-value ${
+              selectedValues.length === 0 ? "placeholder" : ""
+            }`}
+          >
             {displayValue}
           </span>
-          
+
           <div className="dropdown-actions">
             {clearable && selectedValues.length > 0 && !disabled && (
               <button
@@ -167,8 +183,8 @@ const Dropdown: React.FC<DropdownProps> = ({
                 </svg>
               </button>
             )}
-            
-            <div className={`dropdown-arrow ${isOpen ? 'open' : ''}`}>
+
+            <div className={`dropdown-arrow ${isOpen ? "open" : ""}`}>
               <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
                 <path
                   d="M4 6L8 10L12 6"
@@ -196,17 +212,17 @@ const Dropdown: React.FC<DropdownProps> = ({
                 />
               </div>
             )}
-            
+
             <div className="dropdown-options" role="listbox">
               {filteredOptions.length === 0 ? (
                 <div className="dropdown-no-options">No options found</div>
               ) : (
                 filteredOptions.map((option) => (
                   <div
-                    key={option.value}
+                    key={option.label}
                     className={`dropdown-option ${
-                      selectedValues.includes(option.value) ? 'selected' : ''
-                    } ${option.disabled ? 'disabled' : ''}`}
+                      selectedValues.includes(option.value) ? "selected" : ""
+                    } ${option.disabled ? "disabled" : ""}`}
                     onClick={() => handleOptionSelect(option)}
                     role="option"
                     aria-selected={selectedValues.includes(option.value)}
@@ -219,8 +235,14 @@ const Dropdown: React.FC<DropdownProps> = ({
                         className="dropdown-checkbox"
                       />
                     )}
-                    {option.icon && <span className="dropdown-option-icon">{option.icon}</span>}
-                    <span className="dropdown-option-label">{option.label}</span>
+                    {option.icon && (
+                      <span className="dropdown-option-icon">
+                        {option.icon}
+                      </span>
+                    )}
+                    <span className="dropdown-option-label">
+                      {option.label}
+                    </span>
                   </div>
                 ))
               )}
@@ -230,7 +252,7 @@ const Dropdown: React.FC<DropdownProps> = ({
       </div>
 
       {(error || helperText) && (
-        <div className={`dropdown-helper ${error ? 'error' : ''}`}>
+        <div className={`dropdown-helper ${error ? "error" : ""}`}>
           {error || helperText}
         </div>
       )}
