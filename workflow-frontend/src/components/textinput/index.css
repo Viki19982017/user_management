@@ -1,0 +1,319 @@
+/* TextInput Container */
+.textinput-container {
+  position: relative;
+  width: 100%;
+}
+
+.textinput-label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #374151;
+  margin-bottom: 0.5rem;
+}
+
+.textinput-label.required::after {
+  content: ' *';
+  color: #ef4444;
+}
+
+/* TextInput Main */
+.textinput {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  background: white;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.textinput:hover:not(.disabled):not(.readonly) {
+  border-color: #9ca3af;
+}
+
+.textinput.focused {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.textinput.error {
+  border-color: #ef4444;
+}
+
+.textinput.error.focused {
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+}
+
+.textinput.disabled {
+  background-color: #f9fafb;
+  border-color: #e5e7eb;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.textinput.readonly {
+  background-color: #f9fafb;
+  cursor: default;
+}
+
+/* TextInput Sizes */
+.textinput-small {
+  min-height: 2rem;
+}
+
+.textinput-small .textinput-field {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.textinput-small .textinput-left-icon,
+.textinput-small .textinput-right-icon {
+  padding: 0 0.5rem;
+}
+
+.textinput-medium {
+  min-height: 2.5rem;
+}
+
+.textinput-medium .textinput-field {
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+}
+
+.textinput-medium .textinput-left-icon,
+.textinput-medium .textinput-right-icon {
+  padding: 0 0.75rem;
+}
+
+.textinput-large {
+  min-height: 3rem;
+}
+
+.textinput-large .textinput-field {
+  padding: 1rem 1.25rem;
+  font-size: 1.125rem;
+}
+
+.textinput-large .textinput-left-icon,
+.textinput-large .textinput-right-icon {
+  padding: 0 1rem;
+}
+
+/* TextInput Variants */
+.textinput-outlined {
+  border: 2px solid #d1d5db;
+  background: transparent;
+}
+
+.textinput-filled {
+  background: #f3f4f6;
+  border: 1px solid transparent;
+}
+
+.textinput-filled:hover:not(.disabled):not(.readonly) {
+  background: #e5e7eb;
+}
+
+.textinput-filled.focused {
+  background: white;
+  border-color: #3b82f6;
+}
+
+/* TextInput Field */
+.textinput-field {
+  flex: 1;
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  color: #111827;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+.textinput-field::placeholder {
+  color: #9ca3af;
+}
+
+.textinput-field:disabled {
+  cursor: not-allowed;
+}
+
+.textinput-field:read-only {
+  cursor: default;
+}
+
+/* TextInput Icons */
+.textinput-left-icon,
+.textinput-right-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6b7280;
+  flex-shrink: 0;
+}
+
+.textinput-left-icon {
+  border-right: 1px solid #e5e7eb;
+}
+
+.textinput-right-icon {
+  border-left: 1px solid #e5e7eb;
+}
+
+/* TextInput Actions */
+.textinput-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding-right: 0.5rem;
+}
+
+.textinput-password-toggle,
+.textinput-clear {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem;
+  background: none;
+  border: none;
+  border-radius: 3px;
+  color: #6b7280;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.textinput-password-toggle:hover,
+.textinput-clear:hover {
+  background: #f3f4f6;
+  color: #374151;
+}
+
+.textinput-password-toggle:focus,
+.textinput-clear:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 1px;
+}
+
+/* TextInput Footer */
+.textinput-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-top: 0.5rem;
+  gap: 1rem;
+}
+
+.textinput-helper {
+  font-size: 0.875rem;
+  color: #6b7280;
+  flex: 1;
+}
+
+.textinput-helper.error {
+  color: #ef4444;
+}
+
+.textinput-char-count {
+  font-size: 0.875rem;
+  color: #9ca3af;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Input Types */
+.textinput-field[type="number"] {
+  -moz-appearance: textfield;
+}
+
+.textinput-field[type="number"]::-webkit-outer-spin-button,
+.textinput-field[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.textinput-field[type="search"] {
+  -webkit-appearance: none;
+}
+
+.textinput-field[type="search"]::-webkit-search-decoration,
+.textinput-field[type="search"]::-webkit-search-cancel-button,
+.textinput-field[type="search"]::-webkit-search-results-button,
+.textinput-field[type="search"]::-webkit-search-results-decoration {
+  -webkit-appearance: none;
+}
+
+/* Focus States */
+.textinput-field:focus {
+  outline: none;
+}
+
+/* Autofill Styles */
+.textinput-field:-webkit-autofill,
+.textinput-field:-webkit-autofill:hover,
+.textinput-field:-webkit-autofill:focus {
+  -webkit-box-shadow: 0 0 0 30px white inset !important;
+  -webkit-text-fill-color: #111827 !important;
+}
+
+/* Responsive Design */
+@media (max-width: 640px) {
+  .textinput-small .textinput-field {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .textinput-medium .textinput-field {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+  
+  .textinput-large .textinput-field {
+    font-size: 16px; /* Prevent zoom on iOS */
+  }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+  .textinput,
+  .textinput-password-toggle,
+  .textinput-clear {
+    transition: none;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .textinput {
+    border-width: 2px;
+  }
+  
+  .textinput-left-icon,
+  .textinput-right-icon {
+    border-width: 2px;
+  }
+}
+
+/* Dark mode support (if needed) */
+@media (prefers-color-scheme: dark) {
+  .textinput {
+    background: #1f2937;
+    border-color: #4b5563;
+  }
+  
+  .textinput-field {
+    color: #f9fafb;
+  }
+  
+  .textinput-field::placeholder {
+    color: #9ca3af;
+  }
+  
+  .textinput-label {
+    color: #f3f4f6;
+  }
+  
+  .textinput-helper {
+    color: #d1d5db;
+  }
+}
