@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { JwtStrategy } from 'src/auth/jwt.strategy';
 import { WorkflowsService } from './workflows.service';
 import {
   CreateWorkflowDto,

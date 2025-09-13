@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { Page, LegacyCard, Button, LegacyStack, Layout, Banner } from "@shopify/polaris";
+import {
+  Page,
+  Card,
+  Button,
+  BlockStack,
+  Layout,
+  Banner,
+} from "@shopify/polaris";
 import ReactFlow, {
   Background,
   Controls,
@@ -8,11 +15,14 @@ import ReactFlow, {
   Connection,
   Edge,
   Node,
+  applyEdgeChanges,
+  applyNodeChanges,
 } from "reactflow";
 import "reactflow/dist/style.css";
 import axios from "axios";
 
-const apiUrl = (process.env.REACT_APP_API_URL as string) || "http://localhost:3001";
+const apiUrl =
+  (process.env.REACT_APP_API_URL as string) || "http://localhost:3001";
 
 const initialNodes: Node[] = [
   {
@@ -35,6 +45,9 @@ const DashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [workflows, setWorkflows] = useState<any[]>([]);
+
+  console.log("nodes", nodes);
+  console.log("initialNodes", initialNodes);
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -84,6 +97,17 @@ const DashboardPage: React.FC = () => {
     setWorkflows(res.data);
   };
 
+  const onNodesChange = useCallback(
+    (changes: any) =>
+      setNodes((nodesSnapshot) => applyNodeChanges(changes, nodesSnapshot)),
+    []
+  );
+  const onEdgesChange = useCallback(
+    (changes: any) =>
+      setEdges((edgesSnapshot) => applyEdgeChanges(changes, edgesSnapshot)),
+    []
+  );
+
   useEffect(() => {
     fetchWorkflows().catch(() => {});
   }, []);
@@ -97,30 +121,35 @@ const DashboardPage: React.FC = () => {
               {error}
             </Banner>
           )}
-          <LegacyCard sectioned>
+          <Card>
             <div style={{ height: 400 }}>
               <ReactFlow
                 nodes={nodes}
                 edges={edges}
-                onNodesChange={setNodes as any}
-                onEdgesChange={setEdges as any}
+                onNodesChange={onNodesChange}
+                onEdgesChange={onEdgesChange}
                 onConnect={onConnect}
+                fitView
               >
                 <MiniMap />
                 <Controls />
                 <Background />
               </ReactFlow>
             </div>
-            <LegacyStack spacing="tight">
+            <BlockStack gap="200">
               <Button onClick={validateWorkflow}>Validate</Button>
-              <Button variant="primary" onClick={saveWorkflow} loading={loading}>
+              <Button
+                variant="primary"
+                onClick={saveWorkflow}
+                loading={loading}
+              >
                 Save
               </Button>
-            </LegacyStack>
-          </LegacyCard>
+            </BlockStack>
+          </Card>
         </Layout.Section>
         <Layout.Section>
-          <LegacyCard title="My Workflows" sectioned>
+          <Card>
             {workflows.length === 0 ? (
               <p>No workflows yet.</p>
             ) : (
@@ -130,7 +159,7 @@ const DashboardPage: React.FC = () => {
                 ))}
               </ul>
             )}
-          </LegacyCard>
+          </Card>
         </Layout.Section>
       </Layout>
     </Page>

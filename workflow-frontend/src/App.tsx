@@ -1,7 +1,7 @@
 import React from "react";
 import "./App.css";
 import { Routes, Route, Navigate } from "react-router-dom";
-import { Frame, TopBar } from "@shopify/polaris";
+import { Frame } from "@shopify/polaris";
 import { useAuth } from "./state/AuthContext";
 import LoginPage from "./pages/LoginPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -15,20 +15,10 @@ function ProtectedRoute({ children }: { children: ChildrenElement }) {
 }
 
 function App() {
-  const { user, logout } = useAuth();
-  const topBarMarkup = (
-    <TopBar
-      userMenu={
-        {
-          name: user?.email || "Guest",
-          actions: [{ items: [{ content: "Logout", onAction: logout }] }],
-        } as any
-      }
-    />
-  );
+  // TopBar is optional; simplify to avoid deprecated API usage
 
   return (
-    <Frame topBar={topBarMarkup}>
+    <Frame>
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />

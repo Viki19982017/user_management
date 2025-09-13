@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { LegacyCard, Form, FormLayout, Page, TextField, Button, InlineError, Link } from "@shopify/polaris";
+import {
+  Card,
+  Form,
+  FormLayout,
+  Page,
+  TextField,
+  Button,
+  InlineError,
+  Link,
+} from "@shopify/polaris";
 import { useAuth } from "../state/AuthContext";
 import { useNavigate } from "react-router-dom";
 
@@ -26,7 +35,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <Page title="Login">
-      <LegacyCard sectioned>
+      <Card>
         <Form onSubmit={onSubmit}>
           <FormLayout>
             <TextField
@@ -52,7 +61,7 @@ const LoginPage: React.FC = () => {
             </div>
           </FormLayout>
         </Form>
-      </LegacyCard>
+      </Card>
     </Page>
   );
 };

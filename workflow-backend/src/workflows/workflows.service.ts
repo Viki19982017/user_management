@@ -23,10 +23,14 @@ export class WorkflowsService {
   }
 
   async findAll(userId: string) {
-    return this.workflowModel.findAll({
+    const wfs = await this.workflowModel.findAll({
       where: { userId },
       order: [['createdAt', 'DESC']],
     });
+    if (wfs && wfs.length > 0) {
+      return wfs;
+    }
+    return [];
   }
 
   async findOne(userId: string, id: string) {
