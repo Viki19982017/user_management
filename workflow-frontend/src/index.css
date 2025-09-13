@@ -11,12 +11,3 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
-
-.dashboardModal {
-  display: grid;
-  gap: 20px;
-}
-
-.dasboardWorkFlow {
-  display: flex;
-}

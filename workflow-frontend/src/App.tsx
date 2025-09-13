@@ -3,9 +3,9 @@ import "./App.css";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { Frame } from "@shopify/polaris";
 import { useAuth } from "./state/AuthContext";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
-import DashboardPage from "./pages/DashboardPage";
+import LoginPage from "./pages/login/LoginPage";
+import RegisterPage from "./pages/register/RegisterPage";
+import DashboardPage from "./pages/dashboard/DashboardPage";
 
 type ChildrenElement = React.ReactElement;
 function ProtectedRoute({ children }: { children: ChildrenElement }) {

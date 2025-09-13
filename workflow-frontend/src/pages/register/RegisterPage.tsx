@@ -9,11 +9,11 @@ import {
   InlineError,
   Link,
 } from "@shopify/polaris";
-import { useAuth } from "../state/AuthContext";
+import { useAuth } from "../../state/AuthContext";
 import { useNavigate } from "react-router-dom";
 
-const LoginPage: React.FC = () => {
-  const { login } = useAuth();
+const RegisterPage: React.FC = () => {
+  const { register } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,17 +24,17 @@ const LoginPage: React.FC = () => {
     setLoading(true);
     setError(null);
     try {
-      await login(email, password);
+      await register(email, password);
       navigate("/");
     } catch (e: any) {
-      setError(e?.response?.data?.message || "Login failed");
+      setError(e?.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Page title="Login">
+    <Page title="Register">
       <Card>
         <Form onSubmit={onSubmit}>
           <FormLayout>
@@ -50,14 +50,14 @@ const LoginPage: React.FC = () => {
               value={password}
               onChange={setPassword}
               type="password"
-              autoComplete="current-password"
+              autoComplete="new-password"
             />
-            {error && <InlineError message={error} fieldID="login-error" />}
+            {error && <InlineError message={error} fieldID="register-error" />}
             <Button variant="primary" submit loading={loading}>
-              Login
+              Create account
             </Button>
             <div>
-              <Link url="/register">Create an account</Link>
+              <Link url="/login">Have an account? Login</Link>
             </div>
           </FormLayout>
         </Form>
@@ -66,4 +66,4 @@ const LoginPage: React.FC = () => {
   );
 };
 
-export default LoginPage;
+export default RegisterPage;

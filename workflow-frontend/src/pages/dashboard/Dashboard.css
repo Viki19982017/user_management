@@ -1,0 +1,16 @@
+.dashboardModal {
+  display: grid;
+  gap: 20px;
+}
+
+.dasboardWorkFlow {
+  display: flex;
+}
+
+.header {
+  font-size: 18px;
+}
+
+.deleteWorkFlow {
+  color: red;
+}

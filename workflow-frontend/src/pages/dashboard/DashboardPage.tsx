@@ -20,11 +20,16 @@ import ReactFlow, {
 } from "reactflow";
 import "reactflow/dist/style.css";
 import axios from "axios";
-import Modal from "../components/modal";
-import { defaultDropDownOptions, defaultNode, defaultNodes } from "../constant";
-import Dropdown from "../components/dropdown";
-import TextInput from "../components/textinput";
-import Label from "../components/label";
+import Modal from "../../components/modal";
+import {
+  defaultDropDownOptions,
+  defaultNode,
+  defaultNodes,
+} from "../../constant";
+import Dropdown from "../../components/dropdown";
+import TextInput from "../../components/textinput";
+import Label from "../../components/label";
+import "./Dashboard.css";
 
 const apiUrl =
   (process.env.REACT_APP_API_URL as string) || "http://localhost:3001";
@@ -54,6 +59,7 @@ const DashboardPage: React.FC = () => {
   const [currentNode, setCurrentNode] = useState<Node | null>(null);
   const [show, setShow] = useState<boolean>(false);
   const [name, setName] = useState<string>("");
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
 
   const onConnect = useCallback(
     (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -84,6 +90,19 @@ const DashboardPage: React.FC = () => {
         name: name,
         data: { nodes, edges },
       });
+      await fetchWorkflows();
+    } catch (e: any) {
+      setError(e?.response?.data?.message || "Failed to save");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteWorkflow = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const res = await axios.delete(`${apiUrl}/workflows/${currentNode?.id}`);
       await fetchWorkflows();
     } catch (e: any) {
       setError(e?.response?.data?.message || "Failed to save");
@@ -132,6 +151,58 @@ const DashboardPage: React.FC = () => {
     []
   );
 
+  const createOrUpdateNode = () => {
+    if (isEdit) {
+      updateNode();
+    } else {
+      createNode();
+    }
+  };
+
+  const updateNode = () => {
+    nodes[currentNodeIndex].data.label = basicValue;
+    if (singleValue === "input") {
+      nodes[currentNodeIndex].type = "input";
+    } else if (singleValue === "output") {
+      nodes[currentNodeIndex].type = "output";
+    } else {
+      delete nodes[currentNodeIndex].type;
+    }
+    setNodes((nodes) => [...nodes]);
+    resetNodeForm();
+  };
+
+  const createNode = () => {
+    const node = JSON.parse(JSON.stringify(defaultNode));
+    node.data.label = basicValue;
+    if (singleValue === "input") {
+      node.type = "input";
+    } else if (singleValue === "output") {
+      node.type = "output";
+    } else {
+      delete node.type;
+    }
+    const newNode = { ...node, id: `in${nodes.length}` };
+    setNodes([...nodes, newNode]);
+    resetNodeForm();
+  };
+
+  const resetNodeForm = () => {
+    setCurrentNodeIndex(-1);
+    setSingleValue("");
+    setBasicValue("");
+    setIsEdit(false);
+    setOpen(false);
+  };
+
+  const resetForm = () => {
+    setName("");
+    setError(null);
+    setCurrentNode(null);
+    setNodes(defaultNodes);
+    setEdges([]);
+  };
+
   useEffect(() => {
     fetchWorkflows().catch(() => {});
   }, []);
@@ -148,23 +219,42 @@ const DashboardPage: React.FC = () => {
           <Button variant="primary" onClick={() => setOpen(true)}>
             + Add Node
           </Button>
-          {currentNode && (
-            <Button
-              onClick={() => {
-                setNodes(defaultNodes);
-                setEdges([]);
-                setName("");
-                setCurrentNode(null);
-              }}
-            >
-              New
-            </Button>
-          )}
+          <Button
+            onClick={() => {
+              resetForm();
+            }}
+          >
+            New
+          </Button>
+          <Modal
+            isOpen={openDelete}
+            onClose={() => {
+              setOpenDelete(false);
+            }}
+            title="Delete Workflow"
+            size="medium"
+          >
+            <div className="dashboardModal">
+              <p>Are you sure you want to delete this workflow?</p>
+              <p className="header">
+                Workflow Name: <span className="deleteWorkFlow">{name}</span>
+              </p>
+              <Button
+                variant="primary"
+                onClick={() => {
+                  deleteWorkflow();
+                  setOpenDelete(false);
+                  resetForm();
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+          </Modal>
           <Modal
             isOpen={show}
             onClose={() => {
               setShow(false);
-              setName("");
             }}
             title={currentNode ? "Edit Workflow" : "Add Workflow"}
             size="medium"
@@ -192,7 +282,7 @@ const DashboardPage: React.FC = () => {
           <Modal
             isOpen={open}
             onClose={() => {
-              setOpen(false);
+              resetNodeForm();
             }}
             title={isEdit ? "Edit Node" : "Add Node"}
             size="medium"
@@ -214,39 +304,7 @@ const DashboardPage: React.FC = () => {
                 helperText=""
                 clearable
               />
-              <Button
-                variant="primary"
-                onClick={() => {
-                  if (!isEdit) {
-                    const node = JSON.parse(JSON.stringify(defaultNode));
-                    node.data.label = basicValue;
-                    if (singleValue === "input") {
-                      node.type = "input";
-                    } else if (singleValue === "output") {
-                      node.type = "output";
-                    } else {
-                      delete node.type;
-                    }
-                    const newNode = { ...node, id: `in${nodes.length}` };
-                    console.log([...nodes, newNode]);
-                    setNodes([...nodes, newNode]);
-                  } else {
-                    nodes[currentNodeIndex].data.label = basicValue;
-                    if (singleValue === "input") {
-                      nodes[currentNodeIndex].type = "input";
-                    } else if (singleValue === "output") {
-                      nodes[currentNodeIndex].type = "output";
-                    } else {
-                      delete nodes[currentNodeIndex].type;
-                    }
-                    setNodes((nodes) => [...nodes]);
-                    setIsEdit(false);
-                  }
-                  setSingleValue("");
-                  setBasicValue("");
-                  setOpen(false);
-                }}
-              >
+              <Button variant="primary" onClick={createOrUpdateNode}>
                 {isEdit ? "Update Node" : "Add Node"}
               </Button>
             </div>
@@ -334,7 +392,13 @@ const DashboardPage: React.FC = () => {
                       key={w.id}
                       removable
                       editable
-                      onRemove={() => {}}
+                      onRemove={() => {
+                        setName(w.name);
+                        setCurrentNode(w);
+                        setNodes(w.data.nodes);
+                        setEdges(w.data.edges);
+                        setOpenDelete(true);
+                      }}
                       onEdit={() => {
                         setName(w.name);
                         setCurrentNode(w);
