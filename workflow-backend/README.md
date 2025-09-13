@@ -1,98 +1,272 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Workflow Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A NestJS-based backend API for workflow management system with user authentication, workflow creation, validation, and management capabilities.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Prerequisites
 
-## Description
+- **Node.js version 20** (Required)
+- npm (comes with Node.js)
+- PostgreSQL database
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Setting up Node.js 20
 
-## Project setup
-
+If you're using nvm (Node Version Manager):
 ```bash
-$ npm install
+nvm use 20
 ```
 
-## Compile and run the project
+Or install Node.js 20 directly from [nodejs.org](https://nodejs.org/)
 
-```bash
-# development
-$ npm run start
+## Project Structure
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```
+src/
+├── auth/                   # Authentication module
+│   ├── auth.controller.ts  # Authentication endpoints (login, register)
+│   ├── auth.service.ts     # Authentication business logic
+│   ├── auth.module.ts      # Authentication module configuration
+│   ├── jwt-auth.guard.ts   # JWT authentication guard
+│   ├── jwt.strategy.ts     # JWT strategy for Passport
+│   ├── roles.decorator.ts  # Role-based access control decorator
+│   └── roles.guard.ts      # Role-based access control guard
+├── users/                  # User management module
+│   └── user.model.ts       # User database model (Sequelize)
+├── workflows/              # Workflow management module
+│   ├── workflows.controller.ts  # Workflow CRUD endpoints
+│   ├── workflows.service.ts     # Workflow business logic
+│   ├── workflows.module.ts      # Workflow module configuration
+│   ├── workflow.model.ts        # Workflow database model
+│   └── dto.ts                   # Data Transfer Objects
+├── app.module.ts           # Main application module
+├── app.controller.ts       # Application root controller
+├── app.service.ts          # Application root service
+└── main.ts                 # Application entry point
 ```
 
-## Run tests
+## Key Features
 
-```bash
-# unit tests
-$ npm run test
+- **User Authentication**: JWT-based authentication with bcrypt password hashing
+- **Workflow Management**: Create, read, update, delete workflows
+- **Workflow Validation**: Validate workflow structure and connections
+- **Role-Based Access Control**: User roles and permissions
+- **Database Integration**: PostgreSQL with Sequelize ORM
+- **API Documentation**: Swagger/OpenAPI documentation
+- **TypeScript**: Full type safety throughout the application
 
-# e2e tests
-$ npm run test:e2e
+## Installation
 
-# test coverage
-$ npm run test:cov
+1. **Clone the repository** (if not already done)
+
+2. **Navigate to the project directory**:
+   ```bash
+   cd workflow-backend
+   ```
+
+3. **Ensure you're using Node.js 20**:
+   ```bash
+   nvm use 20
+   # or
+   node --version  # Should show v20.x.x
+   ```
+
+4. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+## Environment Variables
+
+Create a `.env` file in the root directory with the following variables:
+
+```env
+# Database Configuration
+DB_HOST=localhost
+DB_PORT=5432
+DB_USER=your_db_username
+DB_PASSWORD=your_db_password
+DB_NAME=workflow_db
+
+# JWT Configuration
+JWT_SECRET=your_super_secret_jwt_key_here
+JWT_EXPIRES_IN=24h
+
+# Application Configuration
+PORT=3001
+NODE_ENV=development
+
+# Optional: Enable database logging
+DB_LOGGING=false
 ```
 
-## Deployment
+### Required Environment Variables
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `DB_HOST` | PostgreSQL database host | `localhost` |
+| `DB_PORT` | PostgreSQL database port | `5432` |
+| `DB_USER` | Database username | `postgres` |
+| `DB_PASSWORD` | Database password | `your_password` |
+| `DB_NAME` | Database name | `workflow_db` |
+| `JWT_SECRET` | Secret key for JWT token signing | `your_super_secret_key` |
+| `JWT_EXPIRES_IN` | JWT token expiration time | `24h` |
+| `PORT` | Application port | `3001` |
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Database Setup
 
+### PostgreSQL Installation
+
+1. **Install PostgreSQL**:
+   - macOS: `brew install postgresql`
+   - Ubuntu: `sudo apt-get install postgresql postgresql-contrib`
+   - Windows: Download from [postgresql.org](https://www.postgresql.org/download/)
+
+2. **Create database**:
+   ```sql
+   CREATE DATABASE workflow_db;
+   CREATE USER your_db_username WITH PASSWORD 'your_db_password';
+   GRANT ALL PRIVILEGES ON DATABASE workflow_db TO your_db_username;
+   ```
+
+3. **Database tables will be created automatically** when you start the application (thanks to Sequelize auto-sync).
+
+## Running the Application Locally
+
+### Development Mode
+
+1. **Start the development server**:
+   ```bash
+   npm run start:dev
+   ```
+
+2. **The API will be available at**: [http://localhost:3001](http://localhost:3001)
+
+3. **API Documentation (Swagger)**: [http://localhost:3001/api](http://localhost:3001/api)
+
+### Production Mode
+
+1. **Build the application**:
+   ```bash
+   npm run build
+   ```
+
+2. **Start the production server**:
+   ```bash
+   npm run start:prod
+   ```
+
+## Available Scripts
+
+### `npm run start:dev`
+Runs the app in development mode with hot reload
+
+### `npm run start`
+Runs the app in development mode
+
+### `npm run start:prod`
+Runs the built app in production mode
+
+### `npm run build`
+Builds the app for production
+
+### `npm run test`
+Runs unit tests
+
+### `npm run test:e2e`
+Runs end-to-end tests
+
+### `npm run test:cov`
+Runs tests with coverage report
+
+## API Endpoints
+
+### Authentication
+- `POST /auth/register` - User registration
+- `POST /auth/login` - User login
+
+### Workflows
+- `GET /workflows` - Get all workflows for authenticated user
+- `POST /workflows` - Create new workflow
+- `PUT /workflows/:id` - Update workflow
+- `DELETE /workflows/:id` - Delete workflow
+- `POST /workflows/validate` - Validate workflow structure
+
+## Database Choice: PostgreSQL
+
+### Why PostgreSQL?
+
+**PostgreSQL** was chosen as the database for this workflow management system for the following reasons:
+
+1. **ACID Compliance**: Ensures data integrity for critical workflow data
+2. **JSON Support**: Native JSON/JSONB support for storing flexible workflow node data
+3. **Scalability**: Excellent performance for complex queries and large datasets
+4. **Reliability**: Mature, stable database with strong community support
+5. **Schema Flexibility**: Supports both structured data (users, workflows) and semi-structured data (workflow configurations)
+6. **Advanced Features**: Support for transactions, foreign keys, and complex relationships
+
+### Database Schema
+
+- **Users Table**: Stores user authentication and profile information
+- **Workflows Table**: Stores workflow metadata and JSON configuration data
+- **Relationships**: Foreign key relationships between users and their workflows
+
+## Development Assumptions
+
+### Workflow Complexity
+- Workflows are represented as JSON objects containing nodes and edges
+- Each workflow belongs to a single user (no collaboration features in v1)
+- Workflow validation ensures proper input/output node connections
+
+### User Roles
+- Single user role system (all authenticated users have same permissions)
+- Future enhancement: Admin/User role separation
+- JWT-based stateless authentication
+
+### Security Assumptions
+- Passwords are hashed using bcrypt with salt rounds
+- JWT tokens expire after 24 hours (configurable)
+- CORS enabled for frontend integration
+- Input validation using class-validator
+
+### Performance Assumptions
+- Expected user base: Small to medium scale (< 10,000 users)
+- Workflow complexity: Up to 100 nodes per workflow
+- Database queries optimized for single-user workflow retrieval
+
+### API Design
+- RESTful API design principles
+- JSON request/response format
+- Error handling with appropriate HTTP status codes
+- Swagger documentation for API exploration
+
+## Troubleshooting
+
+### Node Version Issues
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+nvm install 20
+nvm use 20
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Database Connection Issues
+1. Verify PostgreSQL is running
+2. Check environment variables in `.env`
+3. Ensure database exists and user has permissions
 
-## Resources
+### Dependency Issues
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+### Port Conflicts
+Change the PORT in your `.env` file:
+```env
+PORT=3002
+```
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+## Learn More
 
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- [NestJS Documentation](https://docs.nestjs.com)
+- [Sequelize Documentation](https://sequelize.org/)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+- [JWT Documentation](https://jwt.io/)
+--[Swagger Utl](http://localhost:<port>/api)[i.e:http://localhost:3001/api]

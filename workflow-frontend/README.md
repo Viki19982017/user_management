@@ -1,46 +1,150 @@
-# Getting Started with Create React App
+# Workflow Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based workflow management application built with TypeScript, Shopify Polaris, and ReactFlow for creating and managing visual workflows.
+
+## Prerequisites
+
+- **Node.js version 20** (Required)
+- npm (comes with Node.js)
+
+### Setting up Node.js 20
+
+If you're using nvm (Node Version Manager):
+```bash
+nvm use 20
+```
+
+Or install Node.js 20 directly from [nodejs.org](https://nodejs.org/)
+
+## Project Structure
+
+```
+src/
+├── components/          # Reusable UI components
+│   ├── dropdown/       # Dropdown component with search and multi-select
+│   ├── label/          # Label/Tag component with edit/remove functionality
+│   ├── modal/          # Modal component with accessibility features
+│   └── textinput/      # Text input component with validation
+├── constant/           # Application constants and default values
+├── pages/              # Page components
+│   ├── dashboard/      # Main workflow editor page
+│   ├── login/          # User authentication page
+│   └── register/       # User registration page
+├── state/              # State management (Auth context)
+├── App.tsx             # Main application component
+└── index.tsx           # Application entry point
+```
+
+## Key Features
+
+- **Visual Workflow Editor**: Drag-and-drop interface using ReactFlow
+- **Node Management**: Create, edit, and delete workflow nodes
+- **Workflow Validation**: Ensure workflows have proper input/output connections
+- **User Authentication**: Login and registration system
+- **Responsive Design**: Built with Shopify Polaris for consistent UI
+- **TypeScript**: Full type safety throughout the application
+
+## Installation
+
+1. **Clone the repository** (if not already done)
+
+2. **Navigate to the project directory**:
+   ```bash
+   cd workflow-frontend
+   ```
+
+3. **Ensure you're using Node.js 20**:
+   ```bash
+   nvm use 20
+   # or
+   node --version  # Should show v20.x.x
+   ```
+
+4. **Install dependencies**:
+   ```bash
+   npm install
+   ```
+
+## Running the Application Locally
+
+### Development Mode
+
+1. **Start the development server**:
+   ```bash
+   npm start
+   ```
+
+2. **Open your browser** and navigate to [http://localhost:3000](http://localhost:3000)
+
+3. The application will automatically reload when you make changes to the code.
+
+### Environment Variables
+
+Create a `.env` file in the root directory (optional):
+```env
+REACT_APP_API_URL=http://localhost:3001
+```
 
 ## Available Scripts
 
-In the project directory, you can run:
-
 ### `npm start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+Runs the app in development mode on [http://localhost:3000](http://localhost:3000)
 
 ### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Launches the test runner in interactive watch mode
 
 ### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Builds the app for production to the `build` folder with optimized bundles
 
 ### `npm run eject`
+**Warning**: This is a one-way operation. Ejects from Create React App configuration.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Component Library
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+The application includes custom-built components:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- **Dropdown**: Multi-select dropdown with search functionality
+- **TextInput**: Enhanced input field with validation and icons
+- **Label**: Interactive tags with edit/remove capabilities
+- **Modal**: Accessible modal dialogs with keyboard navigation
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Backend Integration
+
+This frontend connects to a Node.js backend API. Ensure the backend server is running on the configured API URL (default: `http://localhost:3001`).
+
+## Development Workflow
+
+1. **Create new components** in the `src/components/` directory
+2. **Add pages** in the `src/pages/` directory
+3. **Update constants** in `src/constant/index.ts`
+4. **Follow TypeScript** best practices for type safety
+5. **Use Shopify Polaris** components for consistent UI
+
+## Troubleshooting
+
+### Node Version Issues
+If you encounter build errors, ensure you're using Node.js 20:
+```bash
+nvm install 20
+nvm use 20
+```
+
+### Dependency Issues
+Clear node_modules and reinstall:
+```bash
+rm -rf node_modules package-lock.json
+npm install
+```
+
+### Port Conflicts
+If port 3000 is in use, the app will prompt to use a different port or you can specify one:
+```bash
+PORT=3001 npm start
+```
 
 ## Learn More
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+- [React Documentation](https://reactjs.org/)
+- [TypeScript Documentation](https://www.typescriptlang.org/)
+- [Shopify Polaris](https://polaris.shopify.com/)
+- [ReactFlow Documentation](https://reactflow.dev/)
