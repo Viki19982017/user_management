@@ -10,10 +10,12 @@ const Label: React.FC<LabelProps> = ({
   color,
   backgroundColor,
   removable = false,
+  editable = false,
   disabled = false,
   className = '',
   icon,
   onRemove,
+  onEdit,
   onClick,
   id
 }) => {
@@ -51,6 +53,13 @@ const Label: React.FC<LabelProps> = ({
     }
   };
 
+  const handleEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!disabled && onEdit) {
+      onEdit();
+    }
+  };
+
   const handleClick = () => {
     if (!disabled && onClick) {
       onClick();
@@ -66,6 +75,11 @@ const Label: React.FC<LabelProps> = ({
     if (removable && (e.key === 'Delete' || e.key === 'Backspace')) {
       e.preventDefault();
       handleRemove(e as any);
+    }
+    
+    if (editable && e.key === 'F2') {
+      e.preventDefault();
+      handleEdit(e as any);
     }
   };
 
@@ -89,6 +103,27 @@ const Label: React.FC<LabelProps> = ({
       {icon && <span className="label-icon">{icon}</span>}
       
       <span className="label-content">{children}</span>
+      
+      {editable && (
+        <button
+          type="button"
+          className="label-edit"
+          onClick={handleEdit}
+          disabled={disabled}
+          aria-label="Edit label"
+          tabIndex={-1}
+        >
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+            <path
+              d="M8.5 1.5a1.414 1.414 0 0 1 2 2L9 5l-2-2 1.5-1.5zM7 3L2 8v2h2l5-5-2-2z"
+              stroke="currentColor"
+              strokeWidth="1"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </svg>
+        </button>
+      )}
       
       {removable && (
         <button

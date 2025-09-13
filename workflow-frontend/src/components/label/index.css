@@ -107,7 +107,8 @@
   flex-shrink: 0;
 }
 
-/* Remove Button */
+/* Action Buttons (Edit and Remove) */
+.label-edit,
 .label-remove {
   display: flex;
   align-items: center;
@@ -122,25 +123,39 @@
   flex-shrink: 0;
 }
 
+.label-edit:hover:not(:disabled),
 .label-remove:hover:not(:disabled) {
   opacity: 1;
   background-color: rgba(0, 0, 0, 0.1);
   transform: scale(1.1);
 }
 
+.label-edit:active:not(:disabled),
 .label-remove:active:not(:disabled) {
   transform: scale(0.95);
 }
 
+.label-edit:focus,
 .label-remove:focus {
   outline: 1px solid currentColor;
   outline-offset: 1px;
   opacity: 1;
 }
 
+.label-edit:disabled,
 .label-remove:disabled {
   cursor: not-allowed;
   opacity: 0.3;
+}
+
+/* Specific styling for edit button */
+.label-edit {
+  margin-right: 0.125rem;
+}
+
+.label-edit:hover:not(:disabled) {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
 }
 
 /* Animation for removal */

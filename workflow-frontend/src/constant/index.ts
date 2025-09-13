@@ -1,15 +1,22 @@
 import { Node } from "reactflow";
 import { DropdownOption } from "../components/dropdown/Dropdown.types";
 
+export const defaultNode: Node = {
+  id: "in",
+  position: { x: 50, y: 100 },
+  data: { label: "Input" },
+  type: "input",
+};
+
 export const defaultNodes: Node[] = [
   {
-    id: "in",
+    id: "in0",
     position: { x: 50, y: 100 },
     data: { label: "Input" },
     type: "input",
   },
   {
-    id: "out",
+    id: "in1",
     position: { x: 450, y: 100 },
     data: { label: "Output" },
     type: "output",

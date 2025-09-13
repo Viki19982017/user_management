@@ -10,10 +10,12 @@ export interface LabelProps {
   color?: string;
   backgroundColor?: string;
   removable?: boolean;
+  editable?: boolean;
   disabled?: boolean;
   className?: string;
   icon?: ReactNode;
   onRemove?: () => void;
+  onEdit?: () => void;
   onClick?: () => void;
   id?: string | number;
 }
