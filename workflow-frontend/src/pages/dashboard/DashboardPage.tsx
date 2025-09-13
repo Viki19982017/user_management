@@ -18,6 +18,7 @@ import ReactFlow, {
   applyEdgeChanges,
   applyNodeChanges,
 } from "reactflow";
+import { useNavigate } from "react-router-dom";
 import "reactflow/dist/style.css";
 import axios from "axios";
 import Modal from "../../components/modal";
@@ -46,10 +47,12 @@ const nodeColor = (node: Node) => {
 };
 
 const DashboardPage: React.FC = () => {
+  const navigate = useNavigate();
   const [nodes, setNodes] = useState<Node[]>(defaultNodes);
   const [edges, setEdges] = useState<Edge[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [workflows, setWorkflows] = useState<any[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [singleValue, setSingleValue] = useState<string | number>("");
@@ -111,7 +114,7 @@ const DashboardPage: React.FC = () => {
     }
   };
 
-  const validateWorkflow = async () => {
+  const validateWorkflow = async (validate: boolean) => {
     try {
       const res = await axios.post(`${apiUrl}/workflows/validate`, {
         data: { nodes, edges },
@@ -125,9 +128,13 @@ const DashboardPage: React.FC = () => {
             v.requirements.allConnected
           )}`
         );
+        setSuccess(null);
       } else {
-        currentNode ? updateWorkflow() : saveWorkflow();
-        setName("");
+        setSuccess("Workflow validated successfully");
+        if (!validate) {
+          currentNode ? updateWorkflow() : saveWorkflow();
+          setName("");
+        }
         setError(null);
       }
     } catch (e: any) {
@@ -182,7 +189,7 @@ const DashboardPage: React.FC = () => {
     } else {
       delete node.type;
     }
-    const newNode = { ...node, id: `in${nodes.length}` };
+    const newNode = { ...node, id: `in${nodes.length + 1}` };
     setNodes([...nodes, newNode]);
     resetNodeForm();
   };
@@ -199,7 +206,7 @@ const DashboardPage: React.FC = () => {
     setName("");
     setError(null);
     setCurrentNode(null);
-    setNodes(defaultNodes);
+    setNodes(JSON.parse(JSON.stringify(defaultNodes)));
     setEdges([]);
   };
 
@@ -208,12 +215,29 @@ const DashboardPage: React.FC = () => {
   }, []);
 
   return (
-    <Page title="Flow Editor">
+    <Page
+      title="Flow Editor"
+      secondaryActions={[
+        {
+          content: "Logout",
+          accessibilityLabel: "Logout from the Application",
+          onAction: () => {
+            localStorage.clear();
+            navigate("/login");
+          },
+        },
+      ]}
+    >
       <Layout>
         <Layout.Section>
           {error && (
             <Banner tone="critical" onDismiss={() => setError(null)}>
               {error}
+            </Banner>
+          )}
+          {success && (
+            <Banner tone="success" onDismiss={() => setSuccess(null)}>
+              {success}
             </Banner>
           )}
           <Button variant="primary" onClick={() => setOpen(true)}>
@@ -271,7 +295,7 @@ const DashboardPage: React.FC = () => {
               <Button
                 variant="primary"
                 onClick={() => {
-                  validateWorkflow();
+                  validateWorkflow(false);
                   setShow(false);
                 }}
               >
@@ -333,7 +357,7 @@ const DashboardPage: React.FC = () => {
               )}
             </div>
             <BlockStack gap="200">
-              <Button onClick={validateWorkflow}>Validate</Button>
+              <Button onClick={() => validateWorkflow(true)}>Validate</Button>
               <Button
                 variant="primary"
                 onClick={() => setShow(true)}
@@ -359,8 +383,17 @@ const DashboardPage: React.FC = () => {
                     removable
                     editable
                     onRemove={() => {
+                      edges.forEach((item, index) => {
+                        if (item.source === n.id) {
+                          edges.splice(index, 1);
+                        }
+                        if (item.target === n.id) {
+                          edges.splice(index, 1);
+                        }
+                      });
                       nodes.splice(index, 1);
                       setNodes([...nodes]);
+                      setEdges([...edges]);
                     }}
                     onEdit={() => {
                       setBasicValue(n.data.label);
